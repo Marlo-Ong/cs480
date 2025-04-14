@@ -80,12 +80,20 @@ bool Graphics::Initialize(int width, int height)
   m_vertPos = m_shader->GetAttribLocation("v_position");
   m_vertCol = m_shader->GetAttribLocation("v_color");
 
-  // Create the cube
-  m_triangle = new Cube();
-  m_triangle->Initialize(m_vertPos, m_vertCol);
+  // Create the solar system
+  sun = new Pyramid();
+  planet = new Cube();
+  moon = new Cube();
 
-  
-  //enable depth testing
+  sun->Initialize(m_vertPos, m_vertCol);
+  planet->Initialize(m_vertPos, m_vertCol);
+  moon->Initialize(m_vertPos, m_vertCol);
+
+  // EXTRA CREDIT Ugrad: Add additional moon.
+  moon2 = new Pyramid();
+  moon2->Initialize(m_vertPos, m_vertCol);
+
+  // enable depth testing
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
@@ -114,23 +122,63 @@ void Graphics::ComputeTransforms(
 
 void Graphics::Update(double dt, glm::vec3 speed)
 {
-    glm::mat4 tmat;
-    glm::mat4 rmat;
-    glm::mat4 smat;
+  glm::mat4 tmat;
+  glm::mat4 rmat;
+  glm::mat4 smat;
+  std::stack<glm::mat4> tStack;
 
-    vector<float> speed2 = { 0.35, 0.35, 0.0 };
-    vector<float> dist = { 3., 3., 0.0 };
-    vector<float> rotSpeed = { 0.75, 0.75, 0.0 };
-    glm::vec3 rotVector = { 0, 1, 0.0 };
-    vector<float> scale = { 1, 1, 1 };
+  // Sun parameters
+  vector<float> speed1 = {0, 0, 0};
+  vector<float> dist1 = {0, 0, 0};
+  vector<float> rotSpeed1 = {1, 0, 0};
+  glm::vec3 rotVector1 = {0, 1, 0};
+  vector<float> scale1 = {2, 2, 2};
 
-    ComputeTransforms(dt, speed2, dist, rotSpeed, rotVector, scale, tmat, smat, rmat);
+  // Planet parameters
+  vector<float> speed2 = {1, 0, 1};
+  vector<float> dist2 = {8, 0, 8};
+  vector<float> rotSpeed2 = {2, 0, 0};
+  glm::vec3 rotVector2 = {0, 1, 0};
+  vector<float> scale2 = {1, 1, 1};
 
-    // Update the solar system
-    sun->Update(tmat * rmat * smat);
-  //planet->Update(dt);
-  //moon->Update(dt);
+  // Moon 1 parameters
+  vector<float> speed3 = {3, 3, 0};
+  vector<float> dist3 = {3, 3, 0};
+  vector<float> rotSpeed3 = {3, 3, 0};
+  glm::vec3 rotVector3 = {1, 1, 0};
+  vector<float> scale3 = {.5, .5, .5};
 
+  // Moon 2 parameters
+  vector<float> speed4 = {2, 2, 0};
+  vector<float> dist4 = {5, 5, 0};
+  vector<float> rotSpeed4 = {2, 2, 0.0};
+  glm::vec3 rotVector4 = {1, 1, 0};
+  vector<float> scale4 = {.5, .5, .5};
+
+  // Update sun
+  ComputeTransforms(dt, speed1, dist1, rotSpeed1, rotVector1, scale1, tmat, smat, rmat);
+  sun->Update(sun->GetModel() * tmat * rmat * smat);
+  tStack.push(tmat);
+
+  // Update planet
+  ComputeTransforms(dt, speed2, dist2, rotSpeed2, rotVector2, scale2, tmat, smat, rmat);
+  planet->Update(tStack.top() * tmat * rmat * smat);
+  tStack.push(tmat);
+
+  // Update moon 1
+  ComputeTransforms(dt, speed3, dist3, rotSpeed3, rotVector3, scale3, tmat, smat, rmat);
+  moon->Update(tStack.top() * tmat * rmat * smat);
+  tStack.push(tmat);
+  tStack.pop(); // consider this moon as a "leaf" node
+
+  // Update moon 2
+  ComputeTransforms(dt, speed4, dist4, rotSpeed4, rotVector4, scale4, tmat, smat, rmat);
+  moon2->Update(tStack.top() * tmat * rmat * smat);
+  tStack.push(tmat);
+  tStack.pop();
+
+  tStack.pop(); // pop planet
+  tStack.pop(); // pop sun
 }
 
 void Graphics::Render()
@@ -143,14 +191,21 @@ void Graphics::Render()
   m_shader->Enable();
 
   // Send in the projection and view to the shader
-  glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
-  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
+  glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
+  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
-  // Render the cube
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_triangle->GetModel()));
-  m_triangle->Render(m_vertPos,m_vertCol);
+  // Render the solar system
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(sun->GetModel()));
+  sun->Render(m_vertPos, m_vertCol);
 
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planet->GetModel()));
+  planet->Render(m_vertPos, m_vertCol);
 
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(moon->GetModel()));
+  moon->Render(m_vertPos, m_vertCol);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(moon2->GetModel()));
+  moon2->Render(m_vertPos, m_vertCol);
 
   // Get any errors from OpenGL
   auto error = glGetError();

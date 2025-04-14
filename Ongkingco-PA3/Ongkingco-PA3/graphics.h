@@ -2,12 +2,14 @@
 #define GRAPHICS_H
 
 #include <iostream>
+#include <stack>
 using namespace std;
 
 #include "graphics_headers.h"
 #include "camera.h"
 #include "shader.h"
 #include "cube.h"
+#include "pyramid.h"
 
 class Graphics
 {
@@ -44,7 +46,12 @@ class Graphics
     GLint m_vertCol;
 
     // Interactable objects
-    Cube* m_triangle;
+    Pyramid* sun;
+    Cube* planet;
+    Cube* moon;
+    Pyramid* moon2;
+     
+    std::stack<glm::mat4> tStack;
 
 };
 
