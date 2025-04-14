@@ -92,10 +92,44 @@ bool Graphics::Initialize(int width, int height)
   return true;
 }
 
+void Graphics::ComputeTransforms(
+    double dt,
+    std::vector<float> speed,
+    std::vector<float> dist,
+    std::vector<float> rotSpeed,
+    glm::vec3 rotVector,
+    std::vector<float> scale,
+    glm::mat4& tmat,
+    glm::mat4& rmat,
+    glm::mat4& smat) {
+
+    tmat = glm::translate(glm::mat4(1.f), glm::vec3(
+        cos(speed[0] * dt) * dist[0],
+        sin(speed[1] * dt) * dist[1],
+        sin(speed[2] * dt) * dist[2]));
+
+    rmat = glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
+    smat = glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+}
+
 void Graphics::Update(double dt, glm::vec3 speed)
 {
-  // Update the cube
-  m_triangle->Update(dt);
+    glm::mat4 tmat;
+    glm::mat4 rmat;
+    glm::mat4 smat;
+
+    vector<float> speed2 = { 0.35, 0.35, 0.0 };
+    vector<float> dist = { 3., 3., 0.0 };
+    vector<float> rotSpeed = { 0.75, 0.75, 0.0 };
+    glm::vec3 rotVector = { 0, 1, 0.0 };
+    vector<float> scale = { 1, 1, 1 };
+
+    ComputeTransforms(dt, speed2, dist, rotSpeed, rotVector, scale, tmat, smat, rmat);
+
+    // Update the solar system
+    sun->Update(tmat * rmat * smat);
+  //planet->Update(dt);
+  //moon->Update(dt);
 
 }
 

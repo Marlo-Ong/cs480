@@ -17,6 +17,16 @@ class Graphics
     bool Initialize(int width, int height); // set up camera, shader programs, and objects
     void Update(double dt, glm::vec3 speed); // update/transform any objects
     void Render(); // update view
+    void ComputeTransforms(
+        double dt,
+        std::vector<float> speed,
+        std::vector<float> dist,
+        std::vector<float> rotSpeed,
+        glm::vec3 rotVector,
+        std::vector<float> scale,
+        glm::mat4& tmat,
+        glm::mat4& rmat,
+        glm::mat4& smat);
 
   private:
     std::string ErrorString(GLenum error);
