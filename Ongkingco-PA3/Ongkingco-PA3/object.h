@@ -10,7 +10,7 @@ class Object
         ~Object();
 
         void Initialize(GLint posAttribLoc, GLint colAttribLoc);
-        void Update(unsigned int dt);
+        void Update(glm::mat4 newModel);
         void Render(GLint posAttribLoc, GLint colAttribLoc);
 
         // Defines object vertices and triangle indexes

@@ -41,13 +41,9 @@ void Object::Initialize(GLint posAttribLoc, GLint colAttribLoc) {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
 }
 
-void Object::Update(unsigned int dt)
+void Object::Update(glm::mat4 newModel)
 {
-	model = glm::translate(model, m_speed);
-
-	// EXTRA CREDIT (Ugrad section)
-	// Rotate the model on its z-axis by its curent z-rotation speed.
-	model = glm::rotate_slow(model, m_angSpeed.z, glm::vec3(0, 0, 1.f));
+	model = newModel;
 }
 
 void Object::Render(GLint posAttribLoc, GLint colAttribLoc)
