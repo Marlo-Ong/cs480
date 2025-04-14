@@ -4,6 +4,11 @@ Cube::Cube() {
 	createVertices();
 }
 
+Cube::Cube(glm::vec3 pivot, float angle, float scale) {
+	createVertices();
+	setupModelMatrix(pivot, angle, scale);
+}
+
 void Cube::createVertices() {
 
 	// Define 8 vertices and colors for cube

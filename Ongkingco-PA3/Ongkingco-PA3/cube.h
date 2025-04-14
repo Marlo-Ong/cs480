@@ -7,6 +7,7 @@ class Cube : public Object
 {
     public:
         Cube();
+        Cube(glm::vec3 pivot, float angle, float scale);
         void createVertices() override;
 };
 

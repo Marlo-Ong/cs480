@@ -4,6 +4,12 @@ Pyramid::Pyramid() {
 	createVertices();
 }
 
+Pyramid::Pyramid(glm::vec3 pivot, float angle, float scale) {
+	createVertices();
+	model = glm::translate(glm::mat4(1.0f), pivot);
+	setupModelMatrix(pivot, angle, scale);
+}
+
 void Pyramid::createVertices() {
 
 	// Define vertices and colors for pyramid

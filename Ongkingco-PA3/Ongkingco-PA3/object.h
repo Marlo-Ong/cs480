@@ -16,6 +16,7 @@ class Object
         // Defines object vertices and triangle indexes
         virtual void createVertices() = 0;
 
+        void setupModelMatrix(glm::vec3 pivot, float angle, float scale);
         glm::mat4 GetModel();
 
         void setSpeed(glm::vec3 spd) { m_speed = spd; }
@@ -35,6 +36,7 @@ class Object
         // Define object speed and initial rotation angle
         glm::vec3 m_speed = glm::vec3(0., 0., 0.);
         glm::vec3 m_angSpeed = glm::vec3(0., 0., 0.);
+        glm::vec3 pivotLocation = glm::vec3(0., 0., 0.);
         float angle;
 };
 
