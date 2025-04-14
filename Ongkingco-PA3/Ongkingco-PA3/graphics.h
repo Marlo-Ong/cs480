@@ -15,7 +15,7 @@ class Graphics
     Graphics(); // constructor
     ~Graphics(); // destructor
     bool Initialize(int width, int height); // set up camera, shader programs, and objects
-    void Update(unsigned int dt, glm::vec3 speed); // update/transform any objects
+    void Update(double dt, glm::vec3 speed); // update/transform any objects
     void Render(); // update view
 
   private:

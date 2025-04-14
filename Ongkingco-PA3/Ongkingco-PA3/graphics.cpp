@@ -92,7 +92,7 @@ bool Graphics::Initialize(int width, int height)
   return true;
 }
 
-void Graphics::Update(unsigned int dt, glm::vec3 speed)
+void Graphics::Update(double dt, glm::vec3 speed)
 {
   // Update the cube
   m_triangle->Update(dt);
