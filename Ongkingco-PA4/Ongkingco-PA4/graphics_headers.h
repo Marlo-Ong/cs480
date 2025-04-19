@@ -10,6 +10,12 @@
 #include <GLFW/glfw3.h>
 #include <GL/glu.h>
 
+// Assimp
+#include <assimp/Config.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 // GLM for matricies
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
