@@ -27,6 +27,8 @@ class Graphics
     void HierarchicalUpdate2(double dt);
     void Render();
 
+    void setCameraSpeed(glm::vec3 speed) { camSpeed = speed; }
+
   private:
     std::string ErrorString(GLenum error);
 
@@ -38,6 +40,8 @@ class Graphics
     stack<glm::mat4> modelStack;
 
     Camera *m_camera;
+    glm::vec3 camSpeed;
+
     Shader *m_shader;
 
     GLint m_projectionMatrix;

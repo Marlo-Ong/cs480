@@ -27,6 +27,10 @@ bool Camera::Initialize(int w, int h)
   return true;
 }
 
+void Camera::Update(glm::mat4 view) {
+    this->view = view;
+}
+
 glm::mat4 Camera::GetProjection()
 {
   return projection;
