@@ -84,6 +84,7 @@ bool Graphics::Initialize(int width, int height)
 	// Create the second cube;
 	m_cube2 = new Object(glm::vec3(2.0f, 3.0f, -5.0f));
 
+	mesh = new Mesh("./starship.obj");
 
 	//enable depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -271,6 +272,11 @@ void Graphics::Render()
 	if (m_pyramid != NULL) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_pyramid->GetModel()));
 		m_pyramid->Render(m_positionAttrib, m_colorAttrib);
+	}
+
+	if (mesh != NULL) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(mesh->GetModel()));
+		mesh->Render(m_positionAttrib, m_colorAttrib);
 	}
 
 

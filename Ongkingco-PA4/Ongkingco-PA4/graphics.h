@@ -10,6 +10,7 @@ using namespace std;
 #include "shader.h"
 #include "object.h"
 #include "pyramid.h"
+#include "mesh.h"
 
 #define numVBOs 2;
 #define numIBs 2;
@@ -48,6 +49,7 @@ class Graphics
     Object *m_cube;
     Object *m_cube2;
     Pyramid* m_pyramid;
+    Mesh* mesh;
 
 };
 
