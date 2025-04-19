@@ -1,5 +1,7 @@
 #include "sphere.h"
 
+int Sphere::instanceCount = 0;
+
 Sphere::Sphere()
 {
     setupVertices();
@@ -58,6 +60,7 @@ void Sphere::setupVertices() {
     prec = 10;
     numVertices = (prec + 1) * (prec + 1);
     numIndices = prec * prec * 6;
+    instanceCount++;
 
     for (int i = 0; i < numVertices; i++) { Vertices.push_back(Vertex(glm::vec3(0, 0, 0), (glm::vec3(0, 0, 0)))); }
     for (int i = 0; i < numIndices; i++) { Indices.push_back(0); }
@@ -69,7 +72,12 @@ void Sphere::setupVertices() {
             float x = -(float)cos(glm::radians(j * 360.f / prec)) * (float)abs(cos(asin(y)));
             float z = (float)sin(glm::radians(j * 360.f / prec)) * (float)abs(cos(asin(y)));
 
-            Vertices[(i * (prec + 1) + j)] = Vertex(glm::vec3(x, y, z), glm::vec3(x, y, z));
+            // Distinguish different color for every 2nd sphere created
+            glm::vec3 bodyColor = (instanceCount % 2)
+                ? glm::vec3(x, y, z) // RGB
+                : glm::vec3(1.0f) - glm::vec3(x, y, z); // CMY
+
+            Vertices[(i * (prec + 1) + j)] = Vertex(glm::vec3(x, y, z), bodyColor);
         }
     }
 

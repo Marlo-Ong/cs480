@@ -19,6 +19,7 @@ private:
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
 
+    static int instanceCount;
     int numVertices;
     int numIndices;
     int prec;
