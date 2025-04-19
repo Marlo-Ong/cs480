@@ -130,8 +130,9 @@ void Graphics::Update(double dt)
 void Graphics::HierarchicalUpdate2(double dt) {
 
 	// Update camera
-	m_camera->Update(glm::translate(m_camera->GetView(), camSpeed));
+	m_camera->Update(dt, mousePos);
 
+	// Object transforms
 	std::vector<float> speed, dist, rotSpeed, scale;
 	glm::vec3 rotVector;
 	glm::mat4 localTransform;

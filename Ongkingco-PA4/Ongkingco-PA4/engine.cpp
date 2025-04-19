@@ -46,6 +46,7 @@ bool Engine::Initialize()
 void Engine::Run()
 {
   m_running = true;
+  glfwSetInputMode(m_window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   while (!glfwWindowShouldClose(m_window->getWindow()))
   {
@@ -62,28 +63,33 @@ void Engine::ProcessInput()
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(m_window->getWindow(), true);
 
+    // Get mouse position
+    double x, y;
+    glfwGetCursorPos(m_window->getWindow(), &x, &y);
+    m_graphics->SetMousePos(glm::vec2(x, y));
+
     // (Stop translation key if no movement key is pressed)
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_W) == GLFW_RELEASE &&
         glfwGetKey(m_window->getWindow(), GLFW_KEY_A) == GLFW_RELEASE &&
         glfwGetKey(m_window->getWindow(), GLFW_KEY_S) == GLFW_RELEASE &&
         glfwGetKey(m_window->getWindow(), GLFW_KEY_D) == GLFW_RELEASE)
-        m_graphics->setCameraSpeed(glm::vec3(0));
+        m_graphics->GetCamera()->SetSpeed(glm::vec3(0));
 
     // Translate on the camera positive-Y axis when up is pressed
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
-        m_graphics->setCameraSpeed(glm::vec3(0., -.1, 0.));
+        m_graphics->GetCamera()->SetSpeed(glm::vec3(0., -.1, 0.));
 
     // Translate on the camera negative-Y axis when down is pressed
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
-        m_graphics->setCameraSpeed(glm::vec3(0., .1, 0.));
+        m_graphics->GetCamera()->SetSpeed(glm::vec3(0., .1, 0.));
 
     // Translate on the camera negative-X axis when left is pressed
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_A) == GLFW_PRESS)
-        m_graphics->setCameraSpeed(glm::vec3(-.1, 0., 0.));
+        m_graphics->GetCamera()->SetSpeed(glm::vec3(-.1, 0., 0.));
 
     // Translate on the camera positive-X axis when right is pressed
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
-        m_graphics->setCameraSpeed(glm::vec3(.1, 0., 0.));
+        m_graphics->GetCamera()->SetSpeed(glm::vec3(.1, 0., 0.));
 }
 
 unsigned int Engine::getDT()

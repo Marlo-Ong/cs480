@@ -27,8 +27,8 @@ class Graphics
     void HierarchicalUpdate2(double dt);
     void Render();
 
-    void setCameraSpeed(glm::vec3 speed) { camSpeed = speed; }
-
+    void SetMousePos(glm::vec2 pos) { mousePos = pos; }
+    Camera* GetCamera() { return m_camera; };
   private:
     std::string ErrorString(GLenum error);
 
@@ -40,6 +40,7 @@ class Graphics
     stack<glm::mat4> modelStack;
 
     Camera *m_camera;
+    glm::vec2 mousePos;
     glm::vec3 camSpeed;
 
     Shader *m_shader;
