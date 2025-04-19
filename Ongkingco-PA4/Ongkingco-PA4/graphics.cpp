@@ -75,16 +75,14 @@ bool Graphics::Initialize(int width, int height)
 		printf("Some shader attribs not located!\n");
 	}
 
-	// Create a pyramid
-	m_pyramid = new Pyramid(glm::vec3(-3.f, -2.f, 2.f), 25, 1.5);  // inpit: (pivot location, angle, scale)
+	// Create a sphere (sun)
+	sun = new Sphere(glm::vec3(-3.f, -2.f, 2.f), 25, 1.5);  // inpit: (pivot location, angle, scale)
 
-	// Create the object
-	m_cube = new Object();
+	// Create a second sphere (planet)
+	planet = new Sphere();
 
-	// Create the second cube;
-	m_cube2 = new Object(glm::vec3(2.0f, 3.0f, -5.0f));
-
-	mesh = new Mesh("./starship.obj");
+	// Create starship (satellite to planet)
+	starship = new Mesh("./starship.obj");
 
 	//enable depth testing
 	glEnable(GL_DEPTH_TEST);
@@ -107,8 +105,8 @@ void Graphics::Update(double dt)
 	scale = { 1.f, 1.f, 1.f };
 	rotVector = glm::vec3(1.0, 1.0, 0.0);
 	ComputeTransforms(dt, speed, dist, rotSpeed,rotVector, scale, tmat, rmat, smat);
-	if(m_cube!=NULL)
-		m_cube->Update(tmat* rmat* smat);
+	if(planet!=NULL)
+		planet->Update(tmat* rmat* smat);
 	
 	speed = { 0.65,0.0,0.65 };
 	dist = { 6., 0., 6. };
@@ -116,8 +114,8 @@ void Graphics::Update(double dt)
 	scale = { .75f, .75f, .75f };
 	rotVector = glm::vec3(1.0, .0, 1.0);
 	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
-	if(m_cube2!=NULL)
-		m_cube2->Update(tmat* rmat* smat);
+	if(starship!=NULL)
+		starship->Update(tmat* rmat* smat);
     
 	speed = { 0.35,0.35,0.0 };
 	dist = { 3., 3., 0. };
@@ -125,62 +123,9 @@ void Graphics::Update(double dt)
 	scale = { .75f, .75f, .75f };
 	rotVector = glm::vec3(.0, 1.0, 0.0);
 	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
-	if(m_pyramid!=NULL)
-		m_pyramid->Update(tmat* rmat* smat);
+	if(sun!=NULL)
+		sun->Update(tmat* rmat* smat);
 }
-
-void Graphics::HierarchicalUpdate(double dt) {
-	
-	std::vector<float> speed, dist, rotSpeed, scale;
-	glm::vec3 rotVector;
-
-	// position of the sun	
-	modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));  // world origin
-	modelStack.push(modelStack.top());		// The sun origin
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), (float) dt, glm::vec3(0.f, 1.f, 0.f));
-	modelStack.top() *= glm::scale(glm::vec3(.75, .75, .75));
-	if(m_pyramid!=NULL)
-		m_pyramid->Update(modelStack.top());
-	modelStack.pop(); // back to sun's positional transformation
-
-	// position of the first planet
-	speed = {1., 1., 1.};
-	dist = { 6., 0, 6. };
-	rotVector = { 1.,1.,1. };
-	rotSpeed = { 1., 1., 1. };
-	scale = {.5,.5,.5};
-	modelStack.top() *= glm::translate(glm::mat4(1.f),
-		glm::vec3(cos(speed[0] * dt) * dist[0], sin(speed[1] * dt) * dist[1], sin(speed[2] * dt) * dist[2]));
-	modelStack.push(modelStack.top());			// store planet coordinate
-	modelStack.top() *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-	modelStack.top() *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-	if(m_cube!=NULL)
-		m_cube->Update(modelStack.top());
-	modelStack.pop();		// back to planet's positional coordinate (remove the rotration, scale)
-
-	// position of the first moon
-
-	speed = { 6, 6, 6 };
-	dist = { 1.25, 1.25, 0. };
-	rotVector = { 1.,0.,1. };
-	rotSpeed = { .25, .25, .25 };
-	scale = { .27f, .27f, .27f }; 
-	modelStack.top() *= glm::translate(glm::mat4(1.f),
-		glm::vec3(cos(speed[0] * dt) * dist[0], sin(speed[1] * dt) * dist[1], sin(speed[2] * dt) * dist[2]));
-	modelStack.push(modelStack.top());
-	modelStack.top() *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
-	modelStack.top() *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-
-	if(m_cube2!=NULL)
-		m_cube2->Update(modelStack.top());
-
-
-	modelStack.pop(); 	//back to the planet coordinate
-	
-	modelStack.pop(); 	// back to the world coordinate
-
-}
-
 
 void Graphics::HierarchicalUpdate2(double dt) {
 
@@ -191,31 +136,31 @@ void Graphics::HierarchicalUpdate2(double dt) {
 	modelStack.push(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)));  // sun's coordinate
 	localTransform = modelStack.top();		// The sun origin
 	localTransform *= glm::rotate(glm::mat4(1.0f), (float)dt, glm::vec3(0.f, 1.f, 0.f));
-	localTransform *= glm::scale(glm::vec3(.75, .75, .75));
-	if (m_pyramid != NULL)
-		m_pyramid->Update(localTransform);
+	localTransform *= glm::scale(glm::vec3(2, 2, 2));
+	if (sun != NULL)
+		sun->Update(localTransform);
 
 	// position of the first planet
 	speed = { 1., 1., 1. };
 	dist = { 6., 0, 6. };
 	rotVector = { 1.,1.,1. };
 	rotSpeed = { 1., 1., 1. };
-	scale = { .5,.5,.5 };
+	scale = { .75,.75,.75 };
 	localTransform = modelStack.top();				// start with sun's coordinate
 	localTransform *= glm::translate(glm::mat4(1.f),
 		glm::vec3(cos(speed[0] * dt) * dist[0], sin(speed[1] * dt) * dist[1], sin(speed[2] * dt) * dist[2]));
 	modelStack.push(localTransform);			// store planet-sun coordinate
 	localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
 	localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
-	if (m_cube != NULL)
-		m_cube->Update(localTransform);
+	if (planet != NULL)
+		planet->Update(localTransform);
 
 	// position of the first moon
-	speed = { 6, 6, 6 };
+	speed = { 3, 3, 3 };
 	dist = { 1.25, 1.25, 0. };
-	rotVector = { 1.,0.,1. };
-	rotSpeed = { .25, .25, .25 };
-	scale = { .27f, .27f, .27f };
+	rotVector = { 0.,1.,0. };
+	rotSpeed = { 2, 0, 0 };
+	scale = { .15f, .15f, .15f };
 	localTransform = modelStack.top();
 	localTransform *= glm::translate(glm::mat4(1.f),
 		glm::vec3(cos(speed[0] * dt) * dist[0], sin(speed[1] * dt) * dist[1], sin(speed[2] * dt) * dist[2]));
@@ -223,8 +168,8 @@ void Graphics::HierarchicalUpdate2(double dt) {
 	localTransform *= glm::rotate(glm::mat4(1.f), rotSpeed[0] * (float)dt, rotVector);
 	localTransform *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
 
-	if (m_cube2 != NULL)
-		m_cube2->Update(localTransform);
+	if (starship != NULL)
+		starship->Update(localTransform);
 
 
 	modelStack.pop(); 	// back to the planet coordinate
@@ -259,24 +204,19 @@ void Graphics::Render()
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
 	// Render the objects
-	if (m_cube != NULL){
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_cube->GetModel()));
-		m_cube->Render(m_positionAttrib,m_colorAttrib);
+	if (planet != NULL){
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planet->GetModel()));
+		planet->Render(m_positionAttrib,m_colorAttrib);
 	}
 
-	if (m_cube2 != NULL) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_cube2->GetModel()));
-		m_cube2->Render(m_positionAttrib, m_colorAttrib);
+	if (starship != NULL) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(starship->GetModel()));
+		starship->Render(m_positionAttrib, m_colorAttrib);
 	}
 
-	if (m_pyramid != NULL) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_pyramid->GetModel()));
-		m_pyramid->Render(m_positionAttrib, m_colorAttrib);
-	}
-
-	if (mesh != NULL) {
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(mesh->GetModel()));
-		mesh->Render(m_positionAttrib, m_colorAttrib);
+	if (sun != NULL) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(sun->GetModel()));
+		sun->Render(m_positionAttrib, m_colorAttrib);
 	}
 
 

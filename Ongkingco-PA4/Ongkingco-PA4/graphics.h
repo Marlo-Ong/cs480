@@ -11,6 +11,7 @@ using namespace std;
 #include "object.h"
 #include "pyramid.h"
 #include "mesh.h"
+#include "sphere.h"
 
 #define numVBOs 2;
 #define numIBs 2;
@@ -23,7 +24,6 @@ class Graphics
     ~Graphics();
     bool Initialize(int width, int height);
     void Update(double dt);
-    void HierarchicalUpdate(double dt);
     void HierarchicalUpdate2(double dt);
     void Render();
 
@@ -46,10 +46,9 @@ class Graphics
     GLint m_positionAttrib;
     GLint m_colorAttrib;
 
-    Object *m_cube;
-    Object *m_cube2;
-    Pyramid* m_pyramid;
-    Mesh* mesh;
+    Sphere* sun;
+    Sphere* planet;
+    Mesh* starship;
 
 };
 
