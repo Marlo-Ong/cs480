@@ -18,8 +18,14 @@ class Camera
   private:
     glm::mat4 projection;
     glm::mat4 view;
+
     glm::vec3 speed;
-    glm::vec3 eyePos = glm::vec3(0, 10, -16);
+    float yaw = 0.f;
+    float pitch = 0.f;
+    const float mouseSensitivity = 0.05f;
+
+    glm::vec3 startingEyePos = glm::vec3(0, 10, 16);
+    glm::vec3 eyePos = startingEyePos;
 };
 
 #endif /* CAMERA_H */

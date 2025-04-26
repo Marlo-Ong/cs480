@@ -13,9 +13,6 @@ Camera::~Camera()
 bool Camera::Initialize(int w, int h)
 {
   //--Init the view and projection matrices
-  //  if you will be having a moving camera the view matrix will need to more dynamic
-  //  ...Like you should update it before you render more dynamic 
-  //  for this project having them static will be fine
   view = glm::lookAt( eyePos, //Eye Position
                       glm::vec3(0.0, 0.0, 0.0), //Focus point
                       glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
@@ -28,13 +25,36 @@ bool Camera::Initialize(int w, int h)
 }
 
 void Camera::Update(double dt, glm::vec2 mousePos) {
-    glm::vec2 clampedPos = glm::clamp(mousePos, glm::vec2(-2), glm::vec2(2));
+    // calculate the delta mouse pos instead of absolute mouse pos
+    static float lastX, lastY;
+    float deltaYaw = mouseSensitivity * (mousePos.x - lastX); // horizontal change
+    float deltaPitch = mouseSensitivity * (lastY - mousePos.y); // vertical change
+    lastX = mousePos.x;
+    lastY = mousePos.y;
 
-    view = glm::lookAt(eyePos, //Eye Position
-        glm::vec3(clampedPos.x, clampedPos.y, 0.0), //Focus point
-        glm::vec3(0.0, 1.0, 0.0));
+    // update and constrain rotation using mouse change
+    yaw = glm::clamp(yaw + deltaYaw, -120.f, -60.f);
+    pitch = glm::clamp(pitch + deltaPitch, -45.f, -15.f);
 
-	view = glm::translate(view, speed);
+    // update and constrain translation
+    eyePos += speed * mouseSensitivity * (float)dt;
+    eyePos = glm::clamp(
+        eyePos,
+        startingEyePos + glm::vec3(-10.f, -10.f, 0.f),
+        startingEyePos + glm::vec3(10.f, 10.f, 0.f));
+
+    // calculate the forward vector given pitch and yaw
+    glm::vec3 forward;
+    forward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    forward.y = sin(glm::radians(pitch));
+    forward.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    forward = glm::normalize(forward);
+
+    // update the view matrix
+    view = glm::lookAt(
+        eyePos, // position of eye
+        eyePos + forward, // target point in front of eye
+        glm::vec3(0.0, 1.0, 0.0)); // positive Y is up
 }
 
 glm::mat4 Camera::GetProjection()
