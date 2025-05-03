@@ -35,6 +35,8 @@ Mesh::~Mesh()
 }
 
 bool Mesh::loadModelFromFile(const char* path) {
+
+	// Load scene from file
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 
@@ -43,15 +45,16 @@ bool Mesh::loadModelFromFile(const char* path) {
 		return false;
 	}
 	
-    const int invertTotalSize = 2 * sizeof(aiVector3D);
-
-    int iTotalVerts = 0;
-
+	// Iterate through all faces of each mesh in scene
+	int iTotalVerts = 0;
     for (int i = 0; i < scene->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[i];
         int iMeshFaces = mesh->mNumFaces;
+
+		// Save the vertices for each face of a mesh
         for (int j = 0; j < iMeshFaces; j++) {
             const aiFace& face = mesh->mFaces[j];
+
             for (int k = 0; k < 3; k++) {
 				aiVector3D v = mesh->mVertices[face.mIndices[k]];
                 Vertices.push_back(Vertex(
@@ -62,6 +65,7 @@ bool Mesh::loadModelFromFile(const char* path) {
         iTotalVerts += mesh->mNumVertices;
     }
 
+	// Save the indices of each vertex
     for (int i = 0; i < Vertices.size(); i++) {
         Indices.push_back(i);
     }

@@ -82,18 +82,20 @@ void Sphere::setupVertices() {
     }
 
     // calculate triangles indices
-    for (int i = 0; i < prec; i++) {
-        for (int j = 0; j < prec; j++) {
-            Indices[6 * (i * prec + j) + 0] = i * (prec + 1) + j;
-            Indices[6 * (i * prec + j) + 1] = i * (prec + 1) + j + 1;
-            Indices[6 * (i * prec + j) + 2] = (i + 1) * (prec + 1) + j;
+    for (int i = 0; i < prec; i++) { // for each horizontal slice
+        for (int j = 0; j < prec; j++) { // for each vertex in slice
 
-            Indices[6 * (i * prec + j) + 3] = i * (prec + 1) + j + 1;
-            Indices[6 * (i * prec + j) + 4] = (i + 1) * (prec + 1) + j + 1;
-            Indices[6 * (i * prec + j) + 5] = (i + 1) * (prec + 1) + j;
+            // set indices for triangle 1
+            Indices[6 * (i * prec + j) + 0] = i * (prec + 1) + j; // current vertex (bottom-left)
+            Indices[6 * (i * prec + j) + 1] = i * (prec + 1) + j + 1; // right vertex
+            Indices[6 * (i * prec + j) + 2] = (i + 1) * (prec + 1) + j; // above vertex
+
+            // set indices for traingle 2
+            Indices[6 * (i * prec + j) + 3] = i * (prec + 1) + j + 1; // right vertex
+            Indices[6 * (i * prec + j) + 4] = (i + 1) * (prec + 1) + j + 1; // above-right vertex
+            Indices[6 * (i * prec + j) + 5] = (i + 1) * (prec + 1) + j; // above vertex
         }
     }
-
 }
 
 
