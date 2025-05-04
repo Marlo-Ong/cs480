@@ -118,10 +118,25 @@ void Graphics::HierarchicalUpdate2(double dt) {
 		sun->Update(tmat * rmat * smat);
 	modelStack.push(tmat);  // store sun's coordinate
 
+	// position of the starship
+	speed = { 1, 1, 1 };
+	dist = { 5, 5, 0. };
+	rotVector = { 0.,0.,1. };
+	rotSpeed = { 1, 0, 0 };
+	scale = { .04f, .04f, .04f };
+	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
+
+	// Set starship initial rotation to always face sun
+	rmat *= glm::rotate(glm::mat4(1.f), glm::radians(-90.f), glm::vec3(0, 1, 0));
+
+	if (starship != NULL)
+		starship->Update(modelStack.top() * tmat * rmat * smat);
+
 	// position of the first planet
 	speed = { 1., 1., 1. };
-	dist = { 6., 0, 6. };
-	rotVector = { 1.,1.,1. };
+	dist = { 7., 0, 7. };
+	dist = { 7., 0, 7. };
+	rotVector = { 0.,1.,0. };
 	rotSpeed = { 1., 1., 1. };
 	scale = { .75,.75,.75 };
 	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
@@ -134,13 +149,13 @@ void Graphics::HierarchicalUpdate2(double dt) {
 	// position of the first moon
 	speed = { 3, 3, 3 };
 	dist = { 1.25, 1.25, 0. };
-	rotVector = { 0.,1.,0. };
-	rotSpeed = { 2, 0, 0 };
+	rotVector = { 0.,1.,1. };
+	rotSpeed = { 2, 2, 0 };
 	scale = { .15f, .15f, .15f };
 	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
 
-	if (starship != NULL)
-		starship->Update(modelStack.top() * tmat * rmat * smat);
+	if (moon != NULL)
+		moon->Update(modelStack.top() * tmat * rmat * smat);
 
 	modelStack.push(modelStack.top() * tmat); // store moon-sun-planet coordinate
 
