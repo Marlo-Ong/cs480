@@ -9,7 +9,6 @@ using namespace std;
 #include "camera.h"
 #include "shader.h"
 #include "object.h"
-#include "pyramid.h"
 #include "mesh.h"
 #include "sphere.h"
 
@@ -23,7 +22,6 @@ class Graphics
     Graphics();
     ~Graphics();
     bool Initialize(int width, int height);
-    void Update(double dt);
     void HierarchicalUpdate2(double dt);
     void Render();
 
@@ -50,9 +48,14 @@ class Graphics
     GLint m_modelMatrix;
     GLint m_positionAttrib;
     GLint m_colorAttrib;
+    GLint m_tcAttrib;
+    GLint m_hasTexture;
+
 
     Sphere* sun;
     Sphere* planet;
+    Sphere* moon;
+
     Mesh* starship;
 
 };

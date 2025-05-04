@@ -75,56 +75,25 @@ bool Graphics::Initialize(int width, int height)
 		printf("Some shader attribs not located!\n");
 	}
 
-	// Create a sphere (sun)
-	sun = new Sphere(glm::vec3(-3.f, -2.f, 2.f), 25, 1.5);  // inpit: (pivot location, angle, scale)
+	// Starship
+	starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f), "./assets/SpaceShip-1.obj", "./assets/SpaceShip-1.png");
 
-	// Create a second sphere (planet)
-	planet = new Sphere();
+	// The Sun
+	sun = new Sphere(10, "./assets/2k_sun.jpg");
 
-	// Create starship (satellite to planet)
-	starship = new Mesh("./starship.obj");
+	// The Earth
+	planet = new Sphere(10, "./assets/2k_earth_daymap.jpg");
+	
+	// The moon
+	moon = new Sphere(10, "./assets/2k_moon.jpg");
+
+
 
 	//enable depth testing
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
 	return true;
-}
-
-void Graphics::Update(double dt)
-{
-
-	glm::mat4 tmat, rmat, smat;
-	std::vector<float> speed, dist, rotSpeed, scale;
-	glm::vec3 rotVector;
-
-	// Update the object the objects
-	speed = {0.3,0.5,0.2};
-	dist = { 5., 5., 1.0 };
-	rotSpeed = { 1.5f, 1.5f, 1.5f };
-	scale = { 1.f, 1.f, 1.f };
-	rotVector = glm::vec3(1.0, 1.0, 0.0);
-	ComputeTransforms(dt, speed, dist, rotSpeed,rotVector, scale, tmat, rmat, smat);
-	if(planet!=NULL)
-		planet->Update(tmat* rmat* smat);
-	
-	speed = { 0.65,0.0,0.65 };
-	dist = { 6., 0., 6. };
-	rotSpeed = { 0.75f, 0.75f, 0.0f };
-	scale = { .75f, .75f, .75f };
-	rotVector = glm::vec3(1.0, .0, 1.0);
-	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
-	if(starship!=NULL)
-		starship->Update(tmat* rmat* smat);
-    
-	speed = { 0.35,0.35,0.0 };
-	dist = { 3., 3., 0. };
-	rotSpeed = { 1.75f, 1.75f, 0.0f };
-	scale = { .75f, .75f, .75f };
-	rotVector = glm::vec3(.0, 1.0, 0.0);
-	ComputeTransforms(dt, speed, dist, rotSpeed, rotVector, scale, tmat, rmat, smat);
-	if(sun!=NULL)
-		sun->Update(tmat* rmat* smat);
 }
 
 void Graphics::HierarchicalUpdate2(double dt) {
@@ -206,21 +175,68 @@ void Graphics::Render()
 	glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
 
 	// Render the objects
-	if (planet != NULL){
-		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planet->GetModel()));
-		planet->Render(m_positionAttrib,m_colorAttrib);
-	}
-
 	if (starship != NULL) {
+		glUniform1i(m_hasTexture, false);
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(starship->GetModel()));
-		starship->Render(m_positionAttrib, m_colorAttrib);
+		if (starship->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, sun->getTextureID());
+			GLuint sampler = m_shader->GetUniformLocation("sp");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			starship->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
 	}
 
 	if (sun != NULL) {
 		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(sun->GetModel()));
-		sun->Render(m_positionAttrib, m_colorAttrib);
+		if (sun->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, sun->getTextureID());
+			GLuint sampler = m_shader->GetUniformLocation("sp");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			sun->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
 	}
 
+	if (planet != NULL) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planet->GetModel()));
+		if (planet->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, planet->getTextureID());
+			GLuint sampler = m_shader->GetUniformLocation("sp");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			planet->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
+	}
+
+
+	// Render Moon
+	if (moon != NULL) {
+		glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(moon->GetModel()));
+		if (moon->hasTex) {
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, moon->getTextureID());
+			GLuint sampler = m_shader->GetUniformLocation("sp");
+			if (sampler == INVALID_UNIFORM_LOCATION)
+			{
+				printf("Sampler Not found not found\n");
+			}
+			glUniform1i(sampler, 0);
+			moon->Render(m_positionAttrib, m_colorAttrib, m_tcAttrib, m_hasTexture);
+		}
+	}
 
 	// Get any errors from OpenGL
 	auto error = glGetError();
@@ -233,13 +249,13 @@ void Graphics::Render()
 
 
 bool Graphics::collectShPrLocs() {
-
+	bool anyProblem = true;
 	// Locate the projection matrix in the shader
 	m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
 	if (m_projectionMatrix == INVALID_UNIFORM_LOCATION)
 	{
 		printf("m_projectionMatrix not found\n");
-		return false;
+		anyProblem = false;
 	}
 
 	// Locate the view matrix in the shader
@@ -247,7 +263,7 @@ bool Graphics::collectShPrLocs() {
 	if (m_viewMatrix == INVALID_UNIFORM_LOCATION)
 	{
 		printf("m_viewMatrix not found\n");
-		return false;
+		anyProblem = false;
 	}
 
 	// Locate the model matrix in the shader
@@ -255,7 +271,7 @@ bool Graphics::collectShPrLocs() {
 	if (m_modelMatrix == INVALID_UNIFORM_LOCATION)
 	{
 		printf("m_modelMatrix not found\n");
-		return false;
+		anyProblem = false;
 	}
 
 	// Locate the position vertex attribute
@@ -263,7 +279,7 @@ bool Graphics::collectShPrLocs() {
 	if (m_positionAttrib == -1)
 	{
 		printf("v_position attribute not found\n");
-		return false;
+		anyProblem = false;
 	}
 
 	// Locate the color vertex attribute
@@ -271,10 +287,24 @@ bool Graphics::collectShPrLocs() {
 	if (m_colorAttrib == -1)
 	{
 		printf("v_color attribute not found\n");
-		return false;
+		anyProblem = false;
 	}
 
-	return true;
+	// Locate the color vertex attribute
+	m_tcAttrib = m_shader->GetAttribLocation("v_tc");
+	if (m_tcAttrib == -1)
+	{
+		printf("v_texcoord attribute not found\n");
+		anyProblem = false;
+	}
+
+	m_hasTexture = m_shader->GetUniformLocation("hasTexture");
+	if (m_hasTexture == INVALID_UNIFORM_LOCATION) {
+		printf("hasTexture uniform not found\n");
+		anyProblem = false;
+	}
+
+	return anyProblem;
 }
 
 std::string Graphics::ErrorString(GLenum error)

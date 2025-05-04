@@ -1,23 +1,31 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <vector>
 #include "graphics_headers.h"
-#include "object.h"
+#include "Texture.h"
 
-class Mesh : public Object
+class Mesh
 {
-  public:
-    Mesh(const char* path);
-    Mesh(const char* path, glm::vec3 pivot, float angle, float scale);
-    ~Mesh();
-    bool loadModelFromFile(const char* path);
+public:
+    Mesh();
+    Mesh(glm::vec3 pivot, const char* fname);
+    Mesh(glm::vec3 pivot, const char* fname, const char* tname);
 
+    ~Mesh();
     void Update(glm::mat4 model);
     void Render(GLint posAttrib, GLint colAttrib);
+    void Render(GLint positionAttribLoc, GLint colorAttribLoc, GLint tcAttribLoc, GLint hasTex);
 
     glm::mat4 GetModel();
 
     bool InitBuffers();
+    bool loadModelFromFile(const char* path);
+
+    bool hasTex;
+    GLuint getTextureID() { return m_texture->getTextureID(); }
+
+
 
 private:
     glm::vec3 pivotLocation;
@@ -27,11 +35,11 @@ private:
     GLuint VB;
     GLuint IB;
 
+    Texture* m_texture;
+
     GLuint vao;
 
     float angle;
-
-    void setupModelMatrix(glm::vec3 pivotLoc, float angle, float scale);
 };
 
-#endif /* MESH_H */
+#endif

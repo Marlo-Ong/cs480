@@ -64,7 +64,7 @@ void Object::Render(GLint posAttribLoc, GLint colAttribLoc)
 
 	// Set vertex attribute pointers to the load correct data
 	glVertexAttribPointer(posAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+	glVertexAttribPointer(colAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
 	// Bind your Element Array
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
@@ -97,14 +97,14 @@ bool Object::InitBuffers() {
 
 void Object::setupVerticies() {
 	Vertices = {
-  {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}},
-  {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-  {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-  {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-  {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
-  {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}},
-  {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 1.0f}},
-  {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}}
+  {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}, {1.,0.}},
+  {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {1.,0.}},
+  {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {1.,0.}},
+  {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}, {1.,0.}},
+  {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 0.0f}, {1.,0.}},
+  {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}, {1.,0.}},
+  {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 1.0f}, {1.,0.}},
+  {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, {1.,0.}}
 	};
 
 	Indices = {
