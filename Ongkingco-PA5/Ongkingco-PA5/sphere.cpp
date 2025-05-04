@@ -106,7 +106,7 @@ void Sphere::setupVertices() {
 
     int numIndices = getNumIndices();
     for (int i = 0; i < numIndices; i++) {
-        Indices.push_back(i);
+        Indices.push_back(ind[i]);
     }
 
     int numVertices = getNumVertices();

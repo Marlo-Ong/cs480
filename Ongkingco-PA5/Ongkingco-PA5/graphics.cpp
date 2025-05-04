@@ -79,13 +79,13 @@ bool Graphics::Initialize(int width, int height)
 	starship = new Mesh(glm::vec3(2.0f, 3.0f, -5.0f), "./assets/SpaceShip-1.obj", "./assets/SpaceShip-1.png");
 
 	// The Sun
-	sun = new Sphere(10, "./assets/2k_sun.jpg");
+	sun = new Sphere(64, "./assets/2k_sun.jpg");
 
 	// The Earth
-	planet = new Sphere(10, "./assets/2k_earth_daymap.jpg");
+	planet = new Sphere(48, "./assets/2k_earth_daymap.jpg");
 	
 	// The moon
-	moon = new Sphere(10, "./assets/2k_moon.jpg");
+	moon = new Sphere(48, "./assets/2k_moon.jpg");
 
 
 
