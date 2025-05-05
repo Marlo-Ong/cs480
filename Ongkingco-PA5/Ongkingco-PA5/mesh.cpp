@@ -161,6 +161,7 @@ bool Mesh::InitBuffers() {
 }
 
 bool Mesh::loadModelFromFile(const char* path) {
+	// Load scene from file
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
 
@@ -170,18 +171,23 @@ bool Mesh::loadModelFromFile(const char* path) {
 	}
 
 	const int ivertTotalSize = 2 * sizeof(aiVector3D);
-
 	int iTotalVerts = 0;
 
+	// Iterate through all faces of each mesh in scene
 	for (int i = 0; i < scene->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[i];
 		int iMeshFaces = mesh->mNumFaces;
+
+		// Save the vertices for each face of a mesh
 		for (int j = 0; j < iMeshFaces; j++) {
 			const aiFace& face = mesh->mFaces[j];
+
+			// Define vertices with position, normal, and texture coordinates
 			for (int k = 0; k < 3; k++) {
 				aiVector3D v = mesh->mVertices[face.mIndices[k]];
 				aiVector3D n = mesh->HasNormals() ? mesh->mNormals[face.mIndices[k]] : aiVector3D(1.f);
 				aiVector3D tc = mesh->mTextureCoords[0] ? mesh->mTextureCoords[0][j] : aiVector3D(0.f);
+
 				Vertices.push_back(Vertex(
 					glm::vec3(v.x, v.y, v.z),
 					glm::vec3(n.x, n.y, n.z),
@@ -193,6 +199,8 @@ bool Mesh::loadModelFromFile(const char* path) {
 		}
 		iTotalVerts += mesh->mNumVertices;
 	}
+
+	// Define indices as the individual vertices
 	for (int i = 0; i < Vertices.size(); i++) {
 		Indices.push_back(i);
 	}

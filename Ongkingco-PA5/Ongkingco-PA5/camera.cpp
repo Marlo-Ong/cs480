@@ -60,10 +60,11 @@ void Camera::Update(double dt, glm::vec2 mousePos) {
         eyePos + forward, // target point in front of eye
         glm::vec3(0.0, 1.0, 0.0)); // positive Y is up
 
-    projection = glm::perspective(glm::radians(zoom), //the FoV typically 90 degrees is good which is what this is set to
-        width / height, //Aspect Ratio, so Circles stay Circular
-        0.01f, //Distance to the near plane, normally a small value like this
-        100.0f); //Distance to the far plane, 
+    // update the projection matrix with zoom
+    projection = glm::perspective(glm::radians(zoom), // changed by scroll wheel
+        width / height,
+        0.01f,
+        100.0f);
 }
 
 glm::mat4 Camera::GetProjection()

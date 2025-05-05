@@ -66,6 +66,7 @@ void Engine::ProcessInput()
     glfwGetCursorPos(m_window->getWindow(), &x, &y);
     m_graphics->SetMousePos(glm::vec2(x, y));
 
+    // Zoom camera based on scroll wheel position
     if (scrollCallbackCalledThisFrame) {
         m_graphics->GetCamera()->IncreaseZoom(zoomOffset);
         scrollCallbackCalledThisFrame = false;

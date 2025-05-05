@@ -103,12 +103,14 @@ void Sphere::setupVertices() {
     std::vector<glm::vec2> tex = getTexCoords();
     std::vector<glm::vec3> norm = getNormals();
 
-
+    // Populate Indices with previously calculated indices
     int numIndices = getNumIndices();
     for (int i = 0; i < numIndices; i++) {
         Indices.push_back(ind[i]);
     }
 
+    // Populate Vertices with previously calculated
+    // vertices, texture coordinates, and normals
     int numVertices = getNumVertices();
     for (int i = 0; i < numVertices; i++) {
         Vertices.push_back(Vertex(vert[i], norm[i], tex[i]));
@@ -153,6 +155,7 @@ void Sphere::init(int prec) {
     for (int i = 0; i < numVertices; i++) { normals.push_back(glm::vec3()); }
     for (int i = 0; i < numIndices; i++) { indices.push_back(0); }
 
+    // calculate triangles vertices, texture coordinates, and normals
     for (int i = 0; i <= prec; i++) {
         for (int j = 0; j <= prec; j++) {
             float y = (float)cos(toRadians(180.f - i * 180.f / prec));
