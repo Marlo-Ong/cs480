@@ -37,19 +37,19 @@ void Camera::Update(double dt, glm::vec2 mousePos) {
     yaw = glm::clamp(yaw + deltaYaw, -120.f, -60.f);
     pitch = glm::clamp(pitch + deltaPitch, -45.f, -15.f);
 
-    // update and constrain translation
-    eyePos += speed * mouseSensitivity * (float)dt;
-    eyePos = glm::clamp(
-        eyePos,
-        startingEyePos + glm::vec3(-10.f, -10.f, 0.f),
-        startingEyePos + glm::vec3(10.f, 10.f, 0.f));
-
     // calculate the forward vector given pitch and yaw
     glm::vec3 forward;
     forward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     forward.y = sin(glm::radians(pitch));
     forward.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     forward = glm::normalize(forward);
+
+    // update and constrain horizontal translation
+    eyePos += speed.x * mouseSensitivity * (float)dt;
+
+    // translate camera based on forward vector
+    eyePos += forward * speed.y * mouseSensitivity * (float)dt;
+
 
     // update the view matrix
     view = glm::lookAt(
