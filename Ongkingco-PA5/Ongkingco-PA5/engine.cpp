@@ -35,9 +35,7 @@ bool Engine::Initialize()
     printf("The graphics failed to initialize.\n");
     return false;
   }
-
-  glfwSetCursorPosCallback(m_window->getWindow(), cursorPositionCallBack);
-
+  glfwSetScrollCallback(m_window->getWindow(), scrollCallback);
 
   // No errors
   return true;
@@ -47,7 +45,7 @@ void Engine::Run()
 {
   m_running = true;
   glfwSetInputMode(m_window->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+  
   while (!glfwWindowShouldClose(m_window->getWindow()))
   {
       ProcessInput();
@@ -67,6 +65,11 @@ void Engine::ProcessInput()
     double x, y;
     glfwGetCursorPos(m_window->getWindow(), &x, &y);
     m_graphics->SetMousePos(glm::vec2(x, y));
+
+    if (scrollCallbackCalledThisFrame) {
+        m_graphics->GetCamera()->IncreaseZoom(zoomOffset);
+        scrollCallbackCalledThisFrame = false;
+    }
 
     // (Stop translation key if no movement key is pressed)
     if (glfwGetKey(m_window->getWindow(), GLFW_KEY_W) == GLFW_RELEASE &&
@@ -121,6 +124,7 @@ void Engine::Display(GLFWwindow* window, double time) {
     m_graphics->HierarchicalUpdate2(time);
 }
 
-static void cursorPositionCallBack(GLFWwindow* window, double xpos, double ypos) {
-    //cout << xpos << " " << ypos << endl;
+static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+    zoomOffset = yoffset;
+    scrollCallbackCalledThisFrame = true;
 }

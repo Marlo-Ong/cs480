@@ -6,7 +6,9 @@
 #include "window.h"
 #include "graphics.h"
 
-static void cursorPositionCallBack(GLFWwindow*, double xpos, double ypos);
+static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+static double zoomOffset;
+static bool scrollCallbackCalledThisFrame;
 
 class Engine
 {
@@ -20,7 +22,6 @@ class Engine
     unsigned int getDT();
     long long GetCurrentTimeMillis();
     void Display(GLFWwindow*, double);
-
   
   private:
     // Window related variables

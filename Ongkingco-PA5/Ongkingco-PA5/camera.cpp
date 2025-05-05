@@ -18,8 +18,11 @@ bool Camera::Initialize(int w, int h)
                       glm::vec3(0.0, 0.0, 0.0), //Focus point
                       glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
 
+  width = float(w);
+  height = float(h);
+
   projection = glm::perspective( glm::radians(40.f), //the FoV typically 90 degrees is good which is what this is set to
-                                 float(w)/float(h), //Aspect Ratio, so Circles stay Circular
+                                 width/height, //Aspect Ratio, so Circles stay Circular
                                  0.01f, //Distance to the near plane, normally a small value like this
                                  100.0f); //Distance to the far plane, 
   return true;
@@ -56,6 +59,11 @@ void Camera::Update(double dt, glm::vec2 mousePos) {
         eyePos, // position of eye
         eyePos + forward, // target point in front of eye
         glm::vec3(0.0, 1.0, 0.0)); // positive Y is up
+
+    projection = glm::perspective(glm::radians(zoom), //the FoV typically 90 degrees is good which is what this is set to
+        width / height, //Aspect Ratio, so Circles stay Circular
+        0.01f, //Distance to the near plane, normally a small value like this
+        100.0f); //Distance to the far plane, 
 }
 
 glm::mat4 Camera::GetProjection()

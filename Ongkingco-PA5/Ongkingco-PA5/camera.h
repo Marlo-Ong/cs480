@@ -13,11 +13,16 @@ class Camera
     glm::mat4 GetView();
     void Update(double dt, glm::vec2 mousePos);
     void SetSpeed(glm::vec3 speed) { this->speed = speed; }
+    void IncreaseZoom(float degree) { this->zoom = zoom + degree; }
 
   
   private:
     glm::mat4 projection;
     glm::mat4 view;
+
+    float zoom = 40.f;
+    float width;
+    float height;
 
     glm::vec3 speed;
     float yaw = 0.f;
